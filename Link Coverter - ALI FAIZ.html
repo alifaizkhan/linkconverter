@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>LinkForge Pro - Bulk Link Formatter</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f1a;
+    --card: rgba(25, 25, 40, 0.75);
+    --card-border: rgba(80, 80, 255, 0.15);
+    --primary: #6366f1;
+    --primary-glow: #818cf8;
+    --text: #e2e8f0;
+    --text-light: #94a3b8;
+    --glass: rgba(255, 255, 255, 0.05);
+    --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    background-image: 
+      radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(120, 50, 220, 0.25) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(80, 200, 255, 0.15) 0%, transparent 50%);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    background-attachment: fixed;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  .header {
+    text-align: center;
+    margin-bottom: 3rem;
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    padding: 2.5rem 1rem;
+    border: 1px solid rgba(100, 100, 255, 0.1);
+  }
+
+  .header h1 {
+    font-size: 3.2rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #a78bfa, #60a5fa, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.8rem;
+    letter-spacing: -1px;
+  }
+
+  .header p {
+    font-size: 1.25rem;
+    color: var(--text-light);
+    font-weight: 400;
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(99, 102, 241, 0.2);
+    color: #c3dafe;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    margin-top: 1rem;
+  }
+
+  .input-card {
+    background: var(--card);
+    backdrop-filter: blur(16px);
+    border-radius: 24px;
+    padding: 2.5rem;
+    margin-bottom: 2.5rem;
+    border: 1px solid var(--card-border);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    transition: all 0.4s ease;
+  }
+
+  .input-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 60px rgba(99, 102, 241, 0.15);
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 180px;
+    padding: 1.4rem;
+    background: rgba(15, 15, 30, 0.8);
+    border: 1px solid rgba(100, 100, 255, 0.2);
+    border-radius: 16px;
+    color: #fff;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 15px;
+    resize: vertical;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+  }
+
+  .btn-convert {
+    background: var(--gradient);
+    color: white;
+    border: none;
+    padding: 1.1rem 2.5rem;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-convert:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.5);
+  }
+
+  .output-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 1.8rem;
+    margin-top: 2rem;
+  }
+
+  .output-card {
+    background: var(--card);
+    backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 1.8rem;
+    border: 1px solid var(--card-border);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .output-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--gradient);
+    border-radius: 20px 20px 0 0;
+  }
+
+  .output-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px rgba(99, 102, 241, 0.2);
+  }
+
+  .output-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: #c3dafe;
+    font-weight: 600;
+  }
+
+  .output-textarea {
+    width: 100%;
+    min-height: 250px; /* Increased for larger box */
+    padding: 1.2rem;
+    background: rgba(10, 10, 25, 0.7);
+    border: 1px solid rgba(100, 100, 255, 0.15);
+    border-radius: 14px;
+    color: #e2e8f0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    resize: vertical;
+  }
+
+  .copy-btn {
+    background: rgba(34, 197, 94, 0.2);
+    color: #6ee7b7;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    padding: 0.7rem 1.4rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: all 0.3s;
+  }
+
+  .copy-btn:hover {
+    background: rgba(34, 197, 94, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 4rem;
+    color: #64748b;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 768px) {
+    .header h1 { font-size: 2.5rem; }
+    .output-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>LinkForge Pro</h1>
+    <p>Bulk Link Formatter • Ultra Fast • SEO Optimized</p>
+    <div class="badge">Premium Edition • 2026 (by Ali Faiz Khan)</div>
+  </div>
+
+  <div class="input-card">
+    <h2 style="color:#c3dafe; margin-bottom:0.5rem;">Paste Your Links Below</h2>
+    <p style="color:#94a3b8; margin-bottom:1rem;">One URL per line • Auto HTTPS • Smart Titles</p>
+    <textarea id="bulkLinks" placeholder="https://example.com/amazing-seo-guide-2026
+https://yoursite.com/best-tools-ever
+yourblog.com/no-http-needed"></textarea>
+    <button class="btn-convert" onclick="generateLinks()">⚡ Generate All Formats</button>
+  </div>
+
+  <div class="output-grid">
+    <div class="output-card">
+      <h3>🔗 HTTP Links</h3>
+      <textarea id="httpLinks" class="output-textarea" readonly></textarea>
+      <button class="copy-btn" onclick="copyText('httpLinks')">Copy HTTP Links</button>
+    </div>
+
+    <div class="output-card">
+      <h3>✨ HTML Anchor Tags</h3>
+      <textarea id="html" class="output-textarea" readonly></textarea>
+      <button class="copy-btn" onclick="copyText('html')">Copy HTML Code</button>
+    </div>
+
+    <div class="output-card">
+      <h3>📱 BBCode Format</h3>
+      <textarea id="bbcode" class="output-textarea" readonly></textarea>
+      <button class="copy-btn" onclick="copyText('bbcode')">Copy BBCode</button>
+    </div>
+
+    <div class="output-card">
+      <h3>📝 Markdown Format</h3>
+      <textarea id="markdown" class="output-textarea" readonly></textarea>
+      <button class="copy-btn" onclick="copyText('markdown')">Copy Markdown</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    Made by 🔥 by ALI FAIZ KHAN • Premium Bulk Link Tool • January 2026
+  </div>
+</div>
+
+<script>
+function normalizeHttps(link) {
+  link = link.trim();
+  if (!link) return null;
+  if (!link.match(/^https?:\/\//i)) link = "https://" + link;
+  return link.replace(/^http:\/\//i, 'https://');
+}
+
+function getHttpVersion(url) {
+  return "http://" + url.substring(8);
+}
+
+function cleanTitleFromUrl(url) {
+  try {
+    const obj = new URL(url.startsWith("http") ? url : "https://" + url);
+    let path = obj.pathname.split("/").filter(Boolean);
+
+    if (path.length > 0) {
+      let slug = path[path.length - 1];
+      slug = slug.replace(/[-_]/g, " ").replace(/\.[^.]+$/, "");
+      return slug.replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    let domain = obj.hostname.replace(/^www\./, "");
+    domain = domain.split(".")[0];
+    domain = domain.replace(/[-_]/g, " ");
+    return domain.charAt(0).toUpperCase() + domain.slice(1);
+
+  } catch {
+    return "Visit Page";
+  }
+}
+
+function generateLinks() {
+  const lines = document.getElementById("bulkLinks").value.split("\n");
+  const httpOut = [], htmlOut = [], bbOut = [], mdOut = [];
+
+  lines.forEach(line => {
+    const https = normalizeHttps(line);
+    if (!https) return;
+    const title = cleanTitleFromUrl(https);
+    httpOut.push(getHttpVersion(https));
+    htmlOut.push(`<a href="${https}">${title}</a>`);
+    bbOut.push(`[url=${https}]${title}[/url]`);
+    mdOut.push(`[${title}](${https})`);
+  });
+
+  document.getElementById("httpLinks").value = httpOut.join("\n");
+  document.getElementById("html").value = htmlOut.join("\n");
+  document.getElementById("bbcode").value = bbOut.join("\n");
+  document.getElementById("markdown").value = mdOut.join("\n");
+}
+
+function copyText(id) {
+  const el = document.getElementById(id);
+  el.select();
+  document.execCommand("copy");
+  alert("Copied to clipboard! 🚀");
+}
+</script>
+
+</body>
+</html>
