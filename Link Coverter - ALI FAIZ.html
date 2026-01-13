@@ -25,7 +25,7 @@
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
-    background-image: 
+    background-image:
       radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
       radial-gradient(circle at 80% 20%, rgba(120, 50, 220, 0.25) 0%, transparent 50%),
       radial-gradient(circle at 40% 40%, rgba(80, 200, 255, 0.15) 0%, transparent 50%);
@@ -201,6 +201,17 @@
     transform: translateY(-2px);
   }
 
+  /* ADDED: Center H2 headings (no other design change) */
+  .section-heading{
+    display:block;
+    width:100%;
+    text-align:center;
+    color:#c3dafe;
+    font-size:1.55rem;
+    font-weight:800;
+    margin: 1.8rem 0 0.6rem;
+  }
+
   .footer {
     text-align: center;
     margin-top: 4rem;
@@ -232,6 +243,8 @@ yourblog.com/no-http-needed"></textarea>
     <button class="btn-convert" onclick="generateLinks()">⚡ Generate All Formats</button>
   </div>
 
+  <!-- SECTION 1: Anchor with Title -->
+  <h2 class="section-heading">Anchor with Title</h2>
   <div class="output-grid">
     <div class="output-card">
       <h3>🔗 HTTP Links</h3>
@@ -255,6 +268,34 @@ yourblog.com/no-http-needed"></textarea>
       <h3>📝 Markdown Format</h3>
       <textarea id="markdown" class="output-textarea" readonly></textarea>
       <button class="copy-btn" onclick="copyText('markdown')">Copy Markdown</button>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Anchor with Link -->
+  <h2 class="section-heading" style="margin-top:2.2rem;">Anchor with Link</h2>
+  <div class="output-grid">
+    <div class="output-card">
+      <h3>🔗 HTTP Links</h3>
+      <textarea id="httpLinks2" class="output-textarea" readonly></textarea>
+      <button class="copy-btn" onclick="copyText('httpLinks2')">Copy HTTP Links</button>
+    </div>
+
+    <div class="output-card">
+      <h3>✨ HTML Anchor Tags</h3>
+      <textarea id="html2" class="output-textarea" readonly></textarea>
+      <button class="copy-btn" onclick="copyText('html2')">Copy HTML Code</button>
+    </div>
+
+    <div class="output-card">
+      <h3>📱 BBCode Format</h3>
+      <textarea id="bbcode2" class="output-textarea" readonly></textarea>
+      <button class="copy-btn" onclick="copyText('bbcode2')">Copy BBCode</button>
+    </div>
+
+    <div class="output-card">
+      <h3>📝 Markdown Format</h3>
+      <textarea id="markdown2" class="output-textarea" readonly></textarea>
+      <button class="copy-btn" onclick="copyText('markdown2')">Copy Markdown</button>
     </div>
   </div>
 
@@ -297,23 +338,49 @@ function cleanTitleFromUrl(url) {
 }
 
 function generateLinks() {
-  const lines = document.getElementById("bulkLinks").value.split("\n");
+  const lines = document
+    .getElementById("bulkLinks")
+    .value
+    .split("\n")
+    .map(l => l.trim())
+    .filter(Boolean);
+
+  // Title section outputs
   const httpOut = [], htmlOut = [], bbOut = [], mdOut = [];
+  // Link section outputs (anchor text = URL)
+  const httpOut2 = [], htmlOut2 = [], bbOut2 = [], mdOut2 = [];
 
   lines.forEach(line => {
     const https = normalizeHttps(line);
     if (!https) return;
+
     const title = cleanTitleFromUrl(https);
-    httpOut.push(getHttpVersion(https));
-    htmlOut.push(`<a href="${https}">${title}</a>`);
+    const http = getHttpVersion(https);
+
+    // Anchor with Title
+    httpOut.push(http);
+    htmlOut.push(`<a href="${https}">${title}</a><br><br>`);
     bbOut.push(`[url=${https}]${title}[/url]`);
     mdOut.push(`[${title}](${https})`);
+
+    // Anchor with Link (same URL as text)
+    httpOut2.push(http);
+    htmlOut2.push(`<a href="${https}">${https}</a><br><br>`);
+    bbOut2.push(`[url=${https}]${https}[/url]`);
+    mdOut2.push(`[${https}](${https})`);
   });
 
-  document.getElementById("httpLinks").value = httpOut.join("\n");
-  document.getElementById("html").value = htmlOut.join("\n");
-  document.getElementById("bbcode").value = bbOut.join("\n");
-  document.getElementById("markdown").value = mdOut.join("\n");
+  // Gaps (plain text formats)
+  document.getElementById("httpLinks").value  = httpOut.join("\n\n");
+  document.getElementById("bbcode").value     = bbOut.join("\n\n");
+  document.getElementById("markdown").value   = mdOut.join("\n\n");
+  // HTML uses <br><br> so keep join as "" (no extra needed)
+  document.getElementById("html").value       = htmlOut.join("");
+
+  document.getElementById("httpLinks2").value = httpOut2.join("\n\n");
+  document.getElementById("bbcode2").value    = bbOut2.join("\n\n");
+  document.getElementById("markdown2").value  = mdOut2.join("\n\n");
+  document.getElementById("html2").value      = htmlOut2.join("");
 }
 
 function copyText(id) {
@@ -326,5 +393,4 @@ function copyText(id) {
 
 </body>
 </html>
-
 
