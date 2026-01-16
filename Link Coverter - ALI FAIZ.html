@@ -368,7 +368,7 @@ function generateLinks() {
 
     // Anchor with Title
     httpOut.push(http);
-    htmlOut.push(`<a href="${https}">${title}</a><br><br>`);
+htmlOut.push(`<a href="${https}">${title}</a>\n\n`);
     bbOut.push(`[url=${https}]${title}[/url]`);
     mdOut.push(`[${title}](${https})`);
 
@@ -402,5 +402,6 @@ function copyText(id) {
 
 </body>
 </html>
+
 
 
